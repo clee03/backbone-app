@@ -7,6 +7,8 @@ app.ShellView = Backbone.View.extend({
         this.fortuneView = new app.FortuneView({model: this.fortuneModel});
     },
 
+    className: 'fill',
+
     render: function () {
         this.$el.html(this.template());
         // $('.navbar-search', this.el).append(this.searchresultsView.render().el);
@@ -40,10 +42,17 @@ app.ShellView = Backbone.View.extend({
             $('.' + menuItem).addClass('active');
         }
     },
+    colorMe: function () { //function name
+            var color = '#'; // hexadecimal starting symbol
+            var letters = ['FF0000','00FF00','0000FF','FFFF00','00FFFF','FF00FF','C0C0C0']; //Set your colors here
+            color += letters[Math.floor(Math.random() * letters.length)];
+            // document.getElementById('posts').style.background = color; // Setting the random color on your div element.
+            return color;
+    },
 
     getFortune: function() {
         // this.fortuneModel.fetch({reset: true, data: {name: key}});
-        var random = Math.floor(Math.random() * 4) + 1;
+        var random = Math.floor(Math.random() * 10) + 1;
         var id = random;
         // var id = 2;
         var employee = new app.Employee({id: id});
@@ -63,8 +72,9 @@ app.ShellView = Backbone.View.extend({
 
             }
         });
-        // app.Router.fortune;
-        
+        var thing = 
+        this.colorMe();
+        self.$el.css("background-color", thing);
     }
 
 });
