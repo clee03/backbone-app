@@ -1,7 +1,8 @@
-directory.HomeView = Backbone.View.extend({
+app.HomeView = Backbone.View.extend({
 
     events:{
-        "click #showMeBtn":"showMeBtnClick"
+        "click #showMeBtn":"showMeBtnClick",
+        "click #getBtn": "getBtn"
     },
 
     render:function () {
@@ -11,7 +12,11 @@ directory.HomeView = Backbone.View.extend({
 
     showMeBtnClick:function () {
         console.log("showme");
-        directory.shellView.search();
+        app.shellView.search();
+    },
+
+    getBtn: function() {
+        app.shellView.getFortune();
     }
 
 });

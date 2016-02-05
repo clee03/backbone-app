@@ -1,4 +1,4 @@
-var directory = {
+var app = {
 
     views: {},
 
@@ -9,11 +9,11 @@ var directory = {
         var deferreds = [];
 
 
-        //template vies are loaded and reassigned as 'directory.someviewname', views folder takes this info for view
+        //template vies are loaded and reassigned as 'app.someviewname', views folder takes this info for view
         $.each(views, function(index, view) {
-            if (directory[view]) {
+            if (app[view]) {
                 deferreds.push($.get('tpl/' + view + '.html', function(data) {
-                    directory[view].prototype.template = _.template(data);
+                    app[view].prototype.template = _.template(data);
                 }, 'html'));
             } else {
                 alert(view + " not found");
@@ -25,18 +25,18 @@ var directory = {
 
 };
 
-directory.Router = Backbone.Router.extend({
+app.Router = Backbone.Router.extend({
 
     routes: {
         "":                 "home",
         "contact":          "contact",
         "employees/:id":    "employeeDetails",
-        "fortune": "fortune"
+        "fortune":          "fortune"
     },
 
     initialize: function () {
-        directory.shellView = new directory.ShellView();
-        $('body').html(directory.shellView.render().el);
+        app.shellView = new app.ShellView();
+        $('body').html(app.shellView.render().el);
         // Close the search dropdown on click anywhere in the UI
         $('body').click(function () {
             $('.dropdown').removeClass("open");
@@ -46,56 +46,66 @@ directory.Router = Backbone.Router.extend({
 
     home: function () {
         // Since the home view never changes, we instantiate it and render it only once
-        if (!directory.homelView) {
-            directory.homelView = new directory.HomeView();
-            directory.homelView.render();
+        if (!app.homelView) {
+            app.homelView = new app.HomeView();
+            app.homelView.render();
         } else {
             console.log('reusing home view');
-            directory.homelView.delegateEvents(); // delegate events when the view is recycled
+            app.homelView.delegateEvents(); // delegate events when the view is recycled
         }
-        this.$content.html(directory.homelView.el);
-        directory.shellView.selectMenuItem('home-menu');
+        this.$content.html(app.homelView.el);
+        app.shellView.selectMenuItem('home-menu');
     },
 
     contact: function () {
-        if (!directory.contactView) {
-            directory.contactView = new directory.ContactView();
-            directory.contactView.render();
+        if (!app.contactView) {
+            app.contactView = new app.ContactView();
+            app.contactView.render();
         }
-        this.$content.html(directory.contactView.el);
-        directory.shellView.selectMenuItem('contact-menu');
+        this.$content.html(app.contactView.el);
+        app.shellView.selectMenuItem('contact-menu');
     },
 
 
     fortune: function () {
-        if (!directory.fortuneView) {
-            directory.fortuneView = new directory.FortuneView();
-            directory.fortuneView.render();
-        }
-        this.$content.html(directory.fortuneView.el);
-        directory.shellView.selectMenuItem('fortune-menu');
-    },
-
-    employeeDetails: function (id) {
-        var employee = new directory.Employee({id: id});
+        // if (!app.fortuneView) {
+        //     app.fortuneView = new app.FortuneView();
+        //     app.fortuneView.render();
+        // }
+        // this.$content.html(app.fortuneView.el);
+        // app.shellView.selectMenuItem('fortune-menu');
+        var employee = new app.Employee({id: 10});
         var self = this;
         employee.fetch({
             success: function (data) {
                 console.log(data);
                 // Note that we could also 'recycle' the same instance of EmployeeFullView
                 // instead of creating new instances
-                self.$content.html(new directory.EmployeeView({model: data}).render().el);
+                self.$content.html(new app.EmployeeView({model: data}).render().el);
             }
         });
-        directory.shellView.selectMenuItem();
+    },
+
+    employeeDetails: function (id) {
+        var employee = new app.Employee({id: id});
+        var self = this;
+        employee.fetch({
+            success: function (data) {
+                console.log(data);
+                // Note that we could also 'recycle' the same instance of EmployeeFullView
+                // instead of creating new instances
+                self.$content.html(new app.EmployeeView({model: data}).render().el);
+            }
+        });
+        app.shellView.selectMenuItem();
     }
 
 });
 
 $(document).on("ready", function () {
-    directory.loadTemplates(["HomeView", "ContactView", "ShellView", "EmployeeView", "EmployeeSummaryView", "EmployeeListItemView", "FortuneView"],
+    app.loadTemplates(["HomeView", "ContactView", "ShellView", "EmployeeView", "EmployeeSummaryView", "EmployeeListItemView", "FortuneView"],
         function () {
-            directory.router = new directory.Router();
+            app.router = new app.Router();
             Backbone.history.start();
         });
 });

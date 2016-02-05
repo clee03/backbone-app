@@ -1,13 +1,13 @@
-directory.Employee = Backbone.Model.extend({
+app.Employee = Backbone.Model.extend({
 
     initialize:function () {
-        this.reports = new directory.ReportsCollection();
+        this.reports = new app.ReportsCollection();
         this.reports.parent = this;
     },
 
     sync: function(method, model, options) {
         if (method === "read") {
-            directory.store.findById(parseInt(this.id), function (data) {
+            app.store.findById(parseInt(this.id), function (data) {
                 options.success(data);
             });
         }
@@ -15,13 +15,13 @@ directory.Employee = Backbone.Model.extend({
 
 });
 
-directory.EmployeeCollection = Backbone.Collection.extend({
+app.EmployeeCollection = Backbone.Collection.extend({
 
-    model: directory.Employee,
+    model: app.Employee,
 
     sync: function(method, model, options) {
         if (method === "read") {
-            directory.store.findByName(options.data.name, function (data) {
+            app.store.findByName(options.data.name, function (data) {
                 options.success(data);
             });
         }
@@ -29,13 +29,13 @@ directory.EmployeeCollection = Backbone.Collection.extend({
 
 });
 
-directory.ReportsCollection = Backbone.Collection.extend({
+app.ReportsCollection = Backbone.Collection.extend({
 
-    model: directory.Employee,
+    model: app.Employee,
 
     sync: function(method, model, options) {
         if (method === "read") {
-            directory.store.findByManager(this.parent.id, function (data) {
+            app.store.findByManager(this.parent.id, function (data) {
                 options.success(data);
             });
         }
@@ -43,7 +43,7 @@ directory.ReportsCollection = Backbone.Collection.extend({
 
 });
 
-directory.MemoryStore = function (successCallback, errorCallback) {
+app.MemoryStore = function (successCallback, errorCallback) {
 
     this.findByName = function (searchKey, callback) {
         var employees = this.employees.filter(function (element) {
@@ -101,4 +101,4 @@ directory.MemoryStore = function (successCallback, errorCallback) {
 
 }
 
-directory.store = new directory.MemoryStore();
+app.store = new app.MemoryStore();
